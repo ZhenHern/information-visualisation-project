@@ -6,11 +6,11 @@ app = Dash(__name__)
 
 
 app.layout = html.Div([
-    html.H4('Life expentancy progression of countries per continents'),
+    html.H4('Life expentancy progression of countries per continents') ,
     dcc.Graph(id="graph"),
     dcc.Checklist(
         id="checklist",
-        options=["Africa","Americas","Oceania"],
+        options=["Asia", "Europe", "Africa","Americas","Oceania"],
         value=["Americas", "Oceania"],
         inline=True
     ),
@@ -22,6 +22,8 @@ app.layout = html.Div([
     Input("checklist", "value"))
 def update_line_chart(continents):
     df = px.data.gapminder() # replace with your own data source
+    df1 = pd.read_csv("../datasets/countryContinent.csv") 
+    print(df1)
     mask = df.continent.isin(continents)
     fig = px.line(df[mask], 
         x="year", y="lifeExp", color='country')
