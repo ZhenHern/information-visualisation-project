@@ -22,6 +22,7 @@ app.layout = html.Div([
     Input("range-slider", "value"))
 def update_bar_chart(slider_range):
     df = px.data.iris() # replace with your own data source
+    print(df)
     low, high = slider_range
     mask = (df['petal_width'] > low) & (df['petal_width'] < high)
     fig = px.scatter(

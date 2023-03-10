@@ -21,6 +21,7 @@ app.layout = html.Div([
     dcc.Dropdown(['Total Cases', 'Total Vaccinations'], "Total Cases", id="choropleth-dropdown"),
     dcc.Graph(id="choropleth"),
     html.H4('Scatterplot'),
+    dcc.Dropdown(['Correlation between Total Vaccinations and New Cases', 'Correlation between Total Vaccinations and Case Fatality Rate'], "Correlation between Total Vaccinations and New Cases", id="scatterplot-dropdown"),
     dcc.Graph(id="scatterplot")
 ])
 
@@ -30,13 +31,13 @@ app.layout = html.Div([
     Input("checklist", "value"))
 def update_line_graph(title, continents):
     if title == "Total Cases":
-        df = pd.read_csv("./datasets/full_data.csv")
+        df = pd.read_csv("../../datasets/full_data.csv")
         x, y = 'date', 'total_cases'
     else:
-        df = pd.read_csv("./datasets/vaccinations.csv")
+        df = pd.read_csv("../../datasets/vaccinations.csv")
         df = df[df['total_vaccinations'].notna()]
         x, y = 'date', 'total_vaccinations'
-    df1 = pd.read_csv("./datasets/countryContinent.csv", encoding = "cp1252") 
+    df1 = pd.read_csv("../../datasets/countryContinent.csv", encoding = "cp1252") 
     df1 = df1.set_index('country')
     df ['continent'] = df['location'].map(df1['continent'])
     dateMask = df['date'].between('2020-01-01', '2022-12-31')
@@ -52,9 +53,9 @@ def update_line_graph(title, continents):
     Input("choropleth-dropdown", "value"))
 def display_choropleth(title):
     if title == "Total Cases":
-        df = pd.read_csv("./datasets/full_data.csv")
+        df = pd.read_csv("../../datasets/full_data.csv")
         df = df.sort_values('total_cases', ascending=False).drop_duplicates('location').sort_index()
-        df1 = pd.read_csv("./datasets/vaccinations.csv") 
+        df1 = pd.read_csv("../../datasets/vaccinations.csv") 
         df1 = df1[df1['total_vaccinations'].notna()]
         df1 = df1.sort_values('total_vaccinations', ascending=False).drop_duplicates('location').sort_index()
         df1 = df1.set_index('location')
@@ -63,7 +64,7 @@ def display_choropleth(title):
         df, locations="iso", color="total_cases", hover_name="location",
         range_color=[0, 110000000], color_continuous_scale=px.colors.sequential.Sunsetdark)
     else:
-        df = pd.read_csv("./datasets/vaccinations.csv")
+        df = pd.read_csv("../../datasets/vaccinations.csv")
         df = df[df['total_vaccinations'].notna()]
         df = df.sort_values('total_vaccinations', ascending=False).drop_duplicates('location').sort_index()
         fig = px.choropleth(
@@ -73,4 +74,28 @@ def display_choropleth(title):
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     return fig
 
+@app.callback(
+    Output("scatterplot", "figure"), 
+    Input("scatterplot-dropdown", "value"))
+def display_scatterplot(title):
+    df = pd.read_csv("../../datasets/full_data.csv")
+    df1 = pd.read_csv("../../datasets/vaccinations.csv")
+    dateMask = df['date'].between('2020-11-01', '2022-12-31')
+    df  = df[dateMask]
+    df1 = df1[dateMask]
+
+    df = df.loc[df['location'] == "World"]
+    df1 = df1.loc[df1['location'] == "World"]
+    df1 = df1.set_index('date')
+    df ['total_vaccinations'] = df['date'].map(df1['total_vaccinations'])
+    df = df.fillna(0)
+    df['case_fatality_rate'] = df.total_deaths / df.total_cases * 100
+    if title == "Correlation between Total Vaccinations and New Cases":
+        x,y = "total_vaccinations", "new_cases"
+    else:
+        x,y = "total_vaccinations", "case_fatality_rate"
+    fig = px.scatter(
+        df, x=x, y=y
+    )
+    return fig
 app.run_server(debug=True)
