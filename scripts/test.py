@@ -161,14 +161,19 @@ style= {
 def update_line_graph(title, continents):
     if title == "Total Cases":
         df = pd.read_csv("../../datasets/full_data.csv")
+        df2 = pd.read_csv("../../datasets/vaccinations.csv") 
+        df2 = df2[df2['total_vaccinations'].notna()]
+        df2 = df2.sort_values('total_vaccinations', ascending=False).drop_duplicates('location').sort_index()
+        df2 = df2.set_index('location')
+        df['iso_code'] = df['location'].map(df2['iso_code'])
         x, y = 'date', 'total_cases'
     else:
         df = pd.read_csv("../../datasets/vaccinations.csv")
         df = df[df['total_vaccinations'].notna()]
         x, y = 'date', 'total_vaccinations'
     df1 = pd.read_csv("../../datasets/countryContinent.csv", encoding = "cp1252") 
-    df1 = df1.set_index('country')
-    df ['continent'] = df['location'].map(df1['continent'])
+    df1 = df1.set_index('code_3')
+    df['continent'] = df['iso_code'].map(df1['continent'])
     dateMask = df['date'].between('2020-01-01', '2022-12-31')
     df  = df[dateMask]
     mask = df.continent.isin(continents)
