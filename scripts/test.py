@@ -5,25 +5,154 @@ import pandas as pd
 app = Dash(__name__)
 
 app.layout = html.Div([
-    html.H4('Line Graph'),
-    dcc.Dropdown(['Total Cases', 'Total Vaccinations'], "Total Cases", id="line-graph-dropdown"),
-    dcc.Graph(id="line-graph"),
-    dcc.Checklist(
-        id="checklist",
-        options=["Asia", "Europe", "Africa","Americas","Oceania"],
-        value=["Asia"],
-        inline=True,
+    html.H1('Covid-19 Information Visualization Report 2020-2022',
+                style= {
+                    'text-align': 'center'
+                }
+            ),
+    html.Div([
+        html.Div([
+            html.Div([
+                html.H4('Line Graph'),
+                dcc.Dropdown(
+                    ['Total Cases', 'Total Vaccinations'], 
+                    "Total Cases", 
+                    id="line-graph-dropdown",
+                    style= {
+                        'height': '100%',
+                        'width': '200px'
+                    }
+                )    
+            ],
+            style= {
+                'width': '20%',
+                'display': 'flex',
+                'justify-content': 'space-between',
+                'align-items': 'center'
+            }
+            ),
+            dcc.Graph(id="line-graph"),
+            dcc.Checklist(
+                id="checklist",
+                options=["Asia", "Europe", "Africa","Americas","Oceania"],
+                value=["Asia"],
+                inline=True,
+                style= {
+                    'color': 'blue'
+                }
+            )
+        ],
+        id='line-graph-id',
         style= {
-            'color': 'blue'
+            'width': '80%',
+            'padding-left': '5%',
+            'padding-top': '2%',
+            'padding-bottom': '2%',
+            'padding-right': '5%',
+            'background-color': '#fff',
+            'color': '#000',
+            'border-radius': '4px',
+            'box-shadow': '0px 2px 15px rgb(0 0 0 / 17%)'
         }
+        ),
+    ],
+    style = {
+        'display' : 'flex',
+        'justify-content': 'center',
+        'margin-bottom': '50px'
+    }
     ),
-    html.H4('Choropleth'),
-    dcc.Dropdown(['Total Cases', 'Total Vaccinations'], "Total Cases", id="choropleth-dropdown"),
-    dcc.Graph(id="choropleth"),
-    html.H4('Scatterplot'),
-    dcc.Dropdown(['Correlation between Total Vaccinations and New Cases', 'Correlation between Total Vaccinations and Case Fatality Rate'], "Correlation between Total Vaccinations and New Cases", id="scatterplot-dropdown"),
-    dcc.Graph(id="scatterplot")
-])
+    html.Div([
+        html.Div([
+            html.Div([
+                html.H4('Choropleth'),
+                dcc.Dropdown(
+                    ['Total Cases', 'Total Vaccinations'], 
+                    "Total Cases", 
+                    id="choropleth-dropdown",
+                    style= {
+                        'height': '100%',
+                        'width': '200px'
+                    }
+                )    
+            ],
+            style= {
+                'width': '20%',
+                'display': 'flex',
+                'justify-content': 'space-between',
+                'align-items': 'center'
+            }
+            ),
+            dcc.Graph(id="choropleth"),
+        ],
+        id='choropleth-id',
+        style= {
+            'width': '80%',
+            'padding-left': '5%',
+            'padding-top': '2%',
+            'padding-bottom': '2%',
+            'padding-right': '5%',
+            'background-color': '#fff',
+            'color': '#000',
+            'border-radius': '4px',
+            'box-shadow': '0px 2px 15px rgb(0 0 0 / 17%)'
+        }
+        ),
+    ],
+    style = {
+        'display' : 'flex',
+        'justify-content': 'center',
+        'margin-bottom': '50px'
+    }
+    ),
+    html.Div([
+        html.Div([
+            html.Div([
+                html.H4('Scatterplot'),
+                dcc.Dropdown(
+                    ['Correlation between Total Vaccinations and New Cases', 'Correlation between Total Vaccinations and Case Fatality Rate'],
+                    "Correlation between Total Vaccinations and New Cases",
+                    id="scatterplot-dropdown",
+                    style= {
+                        'height': '100%',
+                        'width': '500px'
+                    }
+                )    
+            ],
+            style= {
+                'width': '40%',
+                'display': 'flex',
+                'justify-content': 'space-between',
+                'align-items': 'center'
+            }
+            ),
+            dcc.Graph(id="scatterplot"),
+        ],
+        id='scatterplot-id',
+        style= {
+            'width': '80%',
+            'padding-left': '5%',
+            'padding-top': '2%',
+            'padding-bottom': '2%',
+            'padding-right': '5%',
+            'background-color': '#fff',
+            'color': '#000',
+            'border-radius': '4px',
+            'box-shadow': '0px 2px 15px rgb(0 0 0 / 17%)'
+        }
+        ),
+    ],
+    style = {
+        'display' : 'flex',
+        'justify-content': 'center',
+        'margin-bottom': '50px'
+    }
+    )
+],
+style= {
+    "font-family": "'Roboto', sans-serif"
+}
+)
 
 @app.callback(
     Output("line-graph", "figure"),
