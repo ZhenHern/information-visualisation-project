@@ -160,18 +160,18 @@ style= {
     Input("checklist", "value"))
 def update_line_graph(title, continents):
     if title == "Total Cases":
-        df = pd.read_csv("../../datasets/full_data.csv")
-        df2 = pd.read_csv("../../datasets/vaccinations.csv") 
+        df = pd.read_csv("datasets/full_data.csv")
+        df2 = pd.read_csv("datasets/vaccinations.csv") 
         df2 = df2[df2['total_vaccinations'].notna()]
         df2 = df2.sort_values('total_vaccinations', ascending=False).drop_duplicates('location').sort_index()
         df2 = df2.set_index('location')
         df['iso_code'] = df['location'].map(df2['iso_code'])
         x, y = 'date', 'total_cases'
     else:
-        df = pd.read_csv("../../datasets/vaccinations.csv")
+        df = pd.read_csv("datasets/vaccinations.csv")
         df = df[df['total_vaccinations'].notna()]
         x, y = 'date', 'total_vaccinations'
-    df1 = pd.read_csv("../../datasets/countryContinent.csv", encoding = "cp1252") 
+    df1 = pd.read_csv("datasets/countryContinent.csv", encoding = "cp1252") 
     df1 = df1.set_index('code_3')
     df['continent'] = df['iso_code'].map(df1['continent'])
     dateMask = df['date'].between('2020-01-01', '2022-12-31')
@@ -187,9 +187,9 @@ def update_line_graph(title, continents):
     Input("choropleth-dropdown", "value"))
 def display_choropleth(title):
     if title == "Total Cases":
-        df = pd.read_csv("../../datasets/full_data.csv")
+        df = pd.read_csv("datasets/full_data.csv")
         df = df.sort_values('total_cases', ascending=False).drop_duplicates('location').sort_index()
-        df1 = pd.read_csv("../../datasets/vaccinations.csv") 
+        df1 = pd.read_csv("datasets/vaccinations.csv") 
         df1 = df1[df1['total_vaccinations'].notna()]
         df1 = df1.sort_values('total_vaccinations', ascending=False).drop_duplicates('location').sort_index()
         df1 = df1.set_index('location')
@@ -198,7 +198,7 @@ def display_choropleth(title):
         df, locations="iso", color="total_cases", hover_name="location",
         range_color=[0, 110000000], color_continuous_scale=px.colors.sequential.Sunsetdark)
     else:
-        df = pd.read_csv("../../datasets/vaccinations.csv")
+        df = pd.read_csv("datasets/vaccinations.csv")
         df = df[df['total_vaccinations'].notna()]
         df = df.sort_values('total_vaccinations', ascending=False).drop_duplicates('location').sort_index()
         fig = px.choropleth(
@@ -212,8 +212,8 @@ def display_choropleth(title):
     Output("scatterplot", "figure"), 
     Input("scatterplot-dropdown", "value"))
 def display_scatterplot(title):
-    df = pd.read_csv("../../datasets/full_data.csv")
-    df1 = pd.read_csv("../../datasets/vaccinations.csv")
+    df = pd.read_csv("datasets/full_data.csv")
+    df1 = pd.read_csv("datasets/vaccinations.csv")
     dateMask = df['date'].between('2020-11-01', '2022-12-31')
     df  = df[dateMask]
     df1 = df1[dateMask]
