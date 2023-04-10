@@ -162,7 +162,10 @@ def update_line_graph(title, continents):
     if title == "Total Cases":
         df = pd.read_csv("datasets/full_data.csv")
         df2 = pd.read_csv("datasets/vaccinations.csv") 
+        # Removing null data of total vaccinations
         df2 = df2[df2['total_vaccinations'].notna()]
+
+        # Getting the final total vaccinations by dropping all the duplicates
         df2 = df2.sort_values('total_vaccinations', ascending=False).drop_duplicates('location').sort_index()
         df2 = df2.set_index('location')
         df['iso_code'] = df['location'].map(df2['iso_code'])
@@ -173,7 +176,9 @@ def update_line_graph(title, continents):
         x, y = 'date', 'total_vaccinations'
     df1 = pd.read_csv("datasets/countryContinent.csv", encoding = "cp1252") 
     df1 = df1.set_index('code_3')
+    # Mapping iso code to get continent for the radio input
     df['continent'] = df['iso_code'].map(df1['continent'])
+    # To get the data only from 2020 - 2022
     dateMask = df['date'].between('2020-01-01', '2022-12-31')
     df  = df[dateMask]
     mask = df.continent.isin(continents)
@@ -193,7 +198,9 @@ def display_choropleth(title):
         df1 = df1[df1['total_vaccinations'].notna()]
         df1 = df1.sort_values('total_vaccinations', ascending=False).drop_duplicates('location').sort_index()
         df1 = df1.set_index('location')
+        # Creating a new column iso for full_data data frame "df" as choropleth locations variable need "iso" to determine the country position
         df ['iso'] = df['location'].map(df1['iso_code'])
+        # Used a seuquential data for the choropleth  color scale
         fig = px.choropleth(
         df, locations="iso", color="total_cases", hover_name="location",
         range_color=[0, 110000000], color_continuous_scale=px.colors.sequential.Sunsetdark)
@@ -217,12 +224,14 @@ def display_scatterplot(title):
     dateMask = df['date'].between('2020-11-01', '2022-12-31')
     df  = df[dateMask]
     df1 = df1[dateMask]
-
+    # Getting only "World" data for whole world
     df = df.loc[df['location'] == "World"]
     df1 = df1.loc[df1['location'] == "World"]
     df1 = df1.set_index('date')
+    # Map date to get total vaccinations for the full_data data frame "df"
     df ['total_vaccinations'] = df['date'].map(df1['total_vaccinations'])
     df = df.fillna(0)
+    # Created case fatality rate column by using the formula below
     df['case_fatality_rate'] = df.total_deaths / df.total_cases * 100
     if title == "Correlation between Total Vaccinations and New Cases":
         x,y = "total_vaccinations", "new_cases"
